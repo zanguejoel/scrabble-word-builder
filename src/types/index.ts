@@ -14,6 +14,12 @@ export interface WordResult {
   score: number;
 }
 
+export interface MultiWordResult {
+  bestWord: WordResult;
+  allWords: WordResult[];
+  totalFound: number;
+}
+
 export interface ValidationError {
   valid: false;
   error: string;
@@ -24,3 +30,13 @@ export interface ValidationSuccess {
 }
 
 export type ValidationResult = ValidationSuccess | ValidationError;
+
+// Campaign mode types
+export type {
+  LevelConfig,
+  LevelResult,
+  HintInventory,
+  CampaignProgress,
+  PowerUpType,
+  PowerUpConfig
+} from './campaign';

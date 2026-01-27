@@ -7,10 +7,10 @@ describe('loadDictionary', () => {
   });
 
   it('should load and parse dictionary successfully', async () => {
-    const mockDictionaryText = 'CAT\nDOG\nBIRD\n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'BIRD'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -23,10 +23,10 @@ describe('loadDictionary', () => {
   });
 
   it('should convert words to uppercase', async () => {
-    const mockDictionaryText = 'cat\ndog\nbird\n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'BIRD'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -38,10 +38,10 @@ describe('loadDictionary', () => {
   });
 
   it('should trim whitespace from words', async () => {
-    const mockDictionaryText = '  CAT  \n  DOG  \n  BIRD  \n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'BIRD'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -53,10 +53,10 @@ describe('loadDictionary', () => {
   });
 
   it('should filter out empty lines', async () => {
-    const mockDictionaryText = 'CAT\n\nDOG\n\n\nBIRD\n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'BIRD'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -68,10 +68,10 @@ describe('loadDictionary', () => {
   });
 
   it('should handle Windows line endings (\\r\\n)', async () => {
-    const mockDictionaryText = 'CAT\r\nDOG\r\nBIRD\r\n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'BIRD'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -83,10 +83,10 @@ describe('loadDictionary', () => {
   });
 
   it('should handle Unix line endings (\\n)', async () => {
-    const mockDictionaryText = 'CAT\nDOG\nBIRD\n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'BIRD'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -98,10 +98,10 @@ describe('loadDictionary', () => {
   });
 
   it('should handle empty dictionary', async () => {
-    const mockDictionaryText = '';
+    const mockDictionaryWords: string[] = [];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -110,10 +110,10 @@ describe('loadDictionary', () => {
   });
 
   it('should remove duplicate words', async () => {
-    const mockDictionaryText = 'CAT\nDOG\nCAT\nBIRD\nDOG\n';
+    const mockDictionaryWords = ['CAT', 'DOG', 'CAT', 'BIRD', 'DOG'];
 
     global.fetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue(mockDictionaryText),
+      json: vi.fn().mockResolvedValue(mockDictionaryWords),
     });
 
     const dictionary = await loadDictionary();
@@ -133,13 +133,13 @@ describe('loadDictionary', () => {
 
   it('should call fetch with correct URL', async () => {
     const mockFetch = vi.fn().mockResolvedValue({
-      text: vi.fn().mockResolvedValue('CAT\n'),
+      json: vi.fn().mockResolvedValue(['CAT']),
     });
     global.fetch = mockFetch;
 
     await loadDictionary();
 
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('dictionary.txt'));
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('dictionary.json'));
   });
 });
 

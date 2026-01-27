@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Header from './components/Header';
 import RackInput from './components/RackInput';
@@ -8,31 +8,36 @@ import AnimatedBackground from './components/AnimatedBackground';
 import AlphabetKeyboard from './components/AlphabetKeyboard';
 import LetterSlots from './components/LetterSlots';
 import ControlButtons from './components/ControlButtons';
-import { loadDictionary, loadLetterData } from './utils/dictionary';
-import { validateRack, validateBoardWord } from './utils/validation';
-import { findBestWord } from './utils/scrabbleEngine';
-import { LetterDataMap, WordResult } from './types';
+import ScrollButtons from './components/ScrollButtons';
+import { loadDictionaryWithIndex, loadLetterData } from './utils/dictionary';
+import { validateRack, validateBoardWord, validateRackAndBoard } from './utils/validation';
+import { findAllWords } from './utils/scrabbleEngine';
+import { LetterDataMap, MultiWordResult } from './types';
+import { AnagramIndex } from './utils/anagramIndex';
 
 function App() {
   const [rack, setRack] = useState('');
   const [boardWord, setBoardWord] = useState('');
   const [rackError, setRackError] = useState('');
   const [boardError, setBoardError] = useState('');
-  const [result, setResult] = useState<WordResult | { error: string } | null>(null);
+  const [result, setResult] = useState<MultiWordResult | { error: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [dictionary, setDictionary] = useState<Set<string> | null>(null);
+  const [anagramIndex, setAnagramIndex] = useState<AnagramIndex | null>(null);
   const [letterData, setLetterData] = useState<LetterDataMap | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
-  // Load dictionary and letter data on mount
+  // Load dictionary with anagram index and letter data on mount
   useEffect(() => {
     async function loadData() {
       try {
-        const [dict, letters] = await Promise.all([
-          loadDictionary(),
+        const [{ dictionary: dict, anagramIndex: index }, letters] = await Promise.all([
+          loadDictionaryWithIndex(),
           loadLetterData()
         ]);
         setDictionary(dict);
+        setAnagramIndex(index);
         setLetterData(letters);
       } catch (error) {
         console.error('Failed to load data:', error);
@@ -110,14 +115,29 @@ function App() {
       return;
     }
 
+    // Validate rack + board combination doesn't exceed Scrabble tile limits
+    const combinationValidation = validateRackAndBoard(rack, boardWord, letterData);
+    if (!combinationValidation.valid) {
+      setResult({ error: combinationValidation.error });
+      return;
+    }
+
     // Find best word
     setLoading(true);
 
     // Use setTimeout to allow UI to update with loading state
     setTimeout(() => {
       try {
-        const bestWord = findBestWord(rack, boardWord, dictionary, letterData);
-        setResult(bestWord);
+        const allWords = findAllWords(rack, boardWord, dictionary, letterData, anagramIndex || undefined);
+        setResult(allWords);
+
+        // Scroll to results smoothly after finding words
+        setTimeout(() => {
+          resultRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 100);
       } catch (error) {
         console.error('Error finding word:', error);
         setResult({ error: 'An error occurred while finding the best word.' });
@@ -135,9 +155,16 @@ function App() {
     setResult(null);
   };
 
+  const basePath = import.meta.env.BASE_URL;
+
   if (loadingData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center bg-slate-900 bg-cover bg-center bg-fixed bg-no-repeat relative"
+        style={{
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.92)), url('${basePath}omg-text-made-from-scrabble-game-letters.jpg')`
+        }}
+      >
         <AnimatedBackground />
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -172,9 +199,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
+    <div
+      className="min-h-screen py-8 px-4 bg-slate-900 bg-cover bg-center bg-fixed bg-no-repeat relative"
+      style={{
+        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.90)), url('${basePath}omg-text-made-from-scrabble-game-letters.jpg')`
+      }}
+    >
       <AnimatedBackground />
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto relative z-10">
         <Header />
 
         <motion.div
@@ -255,7 +287,9 @@ function App() {
             </motion.button>
           </form>
 
-          <ResultDisplay result={result} letterData={letterData} />
+          <div ref={resultRef}>
+            <ResultDisplay result={result} letterData={letterData} />
+          </div>
 
           {/* Example buttons */}
           <div className="mt-8 pt-6 border-t border-slate-700">
@@ -298,6 +332,9 @@ function App() {
           </p>
         </motion.footer>
       </div>
+
+      {/* Scroll Buttons */}
+      <ScrollButtons />
     </div>
   );
 }

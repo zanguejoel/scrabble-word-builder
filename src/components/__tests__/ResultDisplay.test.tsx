@@ -26,17 +26,17 @@ describe('ResultDisplay', () => {
   });
 
   it('should display success message when word is found', () => {
-    render(<ResultDisplay result={{ word: 'CAT', score: 5 }} letterData={mockLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 5 }, allWords: [{ word: 'CAT', score: 5 }], totalFound: 1 }} letterData={mockLetterData} />);
     expect(screen.getByText('Best Word Found!')).toBeInTheDocument();
   });
 
   it('should display word score', () => {
-    render(<ResultDisplay result={{ word: 'CAT', score: 5 }} letterData={mockLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 5 }, allWords: [{ word: 'CAT', score: 5 }], totalFound: 1 }} letterData={mockLetterData} />);
     expect(screen.getByText('Score: 5 points')).toBeInTheDocument();
   });
 
   it('should display letter breakdown', () => {
-    render(<ResultDisplay result={{ word: 'CAT', score: 5 }} letterData={mockLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 5 }, allWords: [{ word: 'CAT', score: 5 }], totalFound: 1 }} letterData={mockLetterData} />);
 
     expect(screen.getByText('C')).toBeInTheDocument();
     expect(screen.getByText('A')).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe('ResultDisplay', () => {
   });
 
   it('should display letter breakdown for WORD', () => {
-    render(<ResultDisplay result={{ word: 'WORD', score: 8 }} letterData={mockLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'WORD', score: 8 }, allWords: [{ word: 'WORD', score: 8 }], totalFound: 1 }} letterData={mockLetterData} />);
 
     expect(screen.getByText('W')).toBeInTheDocument();
     expect(screen.getByText('O')).toBeInTheDocument();
@@ -60,14 +60,14 @@ describe('ResultDisplay', () => {
   });
 
   it('should handle result with null letterData', () => {
-    render(<ResultDisplay result={{ word: 'CAT', score: 5 }} letterData={null} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 5 }, allWords: [{ word: 'CAT', score: 5 }], totalFound: 1 }} letterData={null} />);
 
     expect(screen.getByText('Best Word Found!')).toBeInTheDocument();
     expect(screen.getByText('Score: 5 points')).toBeInTheDocument();
   });
 
   it('should display validation checkmarks for success', () => {
-    render(<ResultDisplay result={{ word: 'CAT', score: 5 }} letterData={mockLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 5 }, allWords: [{ word: 'CAT', score: 5 }], totalFound: 1 }} letterData={mockLetterData} />);
 
     expect(screen.getByText('Valid dictionary word')).toBeInTheDocument();
     expect(screen.getByText('Tiles within limits')).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('ResultDisplay', () => {
 
   it('should render success state with proper styling', () => {
     const { container } = render(
-      <ResultDisplay result={{ word: 'CAT', score: 5 }} letterData={mockLetterData} />
+      <ResultDisplay result={{ bestWord: { word: 'CAT', score: 5 }, allWords: [{ word: 'CAT', score: 5 }], totalFound: 1 }} letterData={mockLetterData} />
     );
 
     const successDiv = container.querySelector('.from-green-900\\/40');
@@ -94,7 +94,7 @@ describe('ResultDisplay', () => {
   });
 
   it('should handle high-scoring words', () => {
-    render(<ResultDisplay result={{ word: 'CAT', score: 100 }} letterData={mockLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 100 }, allWords: [{ word: 'CAT', score: 100 }], totalFound: 1 }} letterData={mockLetterData} />);
     expect(screen.getByText('Score: 100 points')).toBeInTheDocument();
   });
 
@@ -105,7 +105,7 @@ describe('ResultDisplay', () => {
       R: { score: 1, count: 6 },
     };
 
-    render(<ResultDisplay result={{ word: 'DOOR', score: 5 }} letterData={letterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'DOOR', score: 5 }, allWords: [{ word: 'DOOR', score: 5 }], totalFound: 1 }} letterData={letterData} />);
 
     expect(screen.getByText('D')).toBeInTheDocument();
     // O appears twice in DOOR
@@ -119,11 +119,45 @@ describe('ResultDisplay', () => {
       C: { score: 3, count: 2 },
     };
 
-    render(<ResultDisplay result={{ word: 'CAT', score: 3 }} letterData={limitedLetterData} />);
+    render(<ResultDisplay result={{ bestWord: { word: 'CAT', score: 3 }, allWords: [{ word: 'CAT', score: 3 }], totalFound: 1 }} letterData={limitedLetterData} />);
 
     expect(screen.getByText('Best Word Found!')).toBeInTheDocument();
     expect(screen.getByText('C')).toBeInTheDocument();
     expect(screen.getByText('A')).toBeInTheDocument();
     expect(screen.getByText('T')).toBeInTheDocument();
+  });
+
+  it('should display multiple valid words', () => {
+    const multiWordResult = {
+      bestWord: { word: 'WORD', score: 8 },
+      allWords: [
+        { word: 'WORD', score: 8 },
+        { word: 'ROW', score: 6 },
+        { word: 'OWL', score: 6 }
+      ],
+      totalFound: 10
+    };
+
+    render(<ResultDisplay result={multiWordResult} letterData={mockLetterData} />);
+
+    expect(screen.getByText('Best Word Found!')).toBeInTheDocument();
+    expect(screen.getByText('Score: 8 points')).toBeInTheDocument();
+    expect(screen.getByText('Other Valid Words')).toBeInTheDocument();
+    expect(screen.getByText('10 total found')).toBeInTheDocument();
+    expect(screen.getByText('ROW')).toBeInTheDocument();
+    expect(screen.getByText('OWL')).toBeInTheDocument();
+  });
+
+  it('should not display other words section when only one word found', () => {
+    const singleWordResult = {
+      bestWord: { word: 'CAT', score: 5 },
+      allWords: [{ word: 'CAT', score: 5 }],
+      totalFound: 1
+    };
+
+    render(<ResultDisplay result={singleWordResult} letterData={mockLetterData} />);
+
+    expect(screen.getByText('Best Word Found!')).toBeInTheDocument();
+    expect(screen.queryByText('Other Valid Words')).not.toBeInTheDocument();
   });
 });

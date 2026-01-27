@@ -27,6 +27,39 @@ export function validateWordLength(word: string): ValidationResult {
   return { valid: true };
 }
 
+/**
+ * Validate that rack + board word combination doesn't exceed Scrabble tile limits
+ * This is a pre-check before searching for words to provide clear error messages
+ */
+export function validateRackAndBoard(
+  rack: string,
+  boardWord: string,
+  letterData: LetterDataMap
+): ValidationResult {
+  const rackUpper = rack.toUpperCase();
+  const boardUpper = boardWord.toUpperCase();
+  const combined = rackUpper + boardUpper;
+
+  // Count letters in combined pool
+  const letterCount: Record<string, number> = {};
+  for (const char of combined) {
+    letterCount[char] = (letterCount[char] || 0) + 1;
+  }
+
+  // Check each letter against Scrabble tile limits
+  for (const [char, count] of Object.entries(letterCount)) {
+    const tileLimit = letterData[char]?.count || 0;
+    if (count > tileLimit) {
+      return {
+        valid: false,
+        error: `Invalid combination: Using ${count} '${char}' tile${count > 1 ? 's' : ''}, but Scrabble only has ${tileLimit}. You can't have more tiles than exist in the game!`
+      };
+    }
+  }
+
+  return { valid: true };
+}
+
 export function validateTileAvailability(
   candidate: string,
   rack: string,

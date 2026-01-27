@@ -34,25 +34,20 @@ test.describe('Loading States', () => {
     await expect(boardInput).toBeEnabled();
   });
 
-  test('should enable submit button after loading', async ({ page }) => {
+  test('should enable submit button after loading with rack input', async ({ page }) => {
     await page.goto('/');
 
-    await page.waitForSelector('button:has-text("Find Best Word")', { timeout: 15000 });
+    await page.waitForSelector('input[placeholder*="AIDOORW"]', { timeout: 15000 });
 
     const submitButton = page.locator('button:has-text("Find Best Word")');
 
-    // Wait a bit more to ensure data is loaded
-    await page.waitForTimeout(1000);
+    // Button should be disabled when rack is empty
+    await expect(submitButton).toBeDisabled();
 
-    // Button should be enabled or have loading disabled
-    const isEnabled = await submitButton.isEnabled();
-    const isDisabled = await submitButton.isDisabled();
+    // Fill the rack input
+    await page.fill('input[placeholder*="AIDOORW"]', 'CAT');
 
-    // Eventually button should be enabled
-    if (isDisabled) {
-      await page.waitForSelector('button:has-text("Find Best Word"):not([disabled])', { timeout: 10000 });
-    }
-
+    // Now button should be enabled
     await expect(submitButton).toBeEnabled();
   });
 

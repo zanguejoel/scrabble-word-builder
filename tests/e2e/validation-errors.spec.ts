@@ -6,11 +6,9 @@ test.describe('Validation Errors', () => {
 
     await page.waitForSelector('input[placeholder*="AIDOORW"]');
 
-    // Leave rack empty and try to submit
-    await page.click('button:has-text("Find Best Word")');
-
-    // Should show validation error
-    await expect(page.locator('text=/.*must contain.*letters/i')).toBeVisible();
+    // Button should be disabled when rack is empty
+    const submitButton = page.locator('button:has-text("Find Best Word")');
+    await expect(submitButton).toBeDisabled();
   });
 
   test('should show error for rack with too many letters', async ({ page }) => {

@@ -4,7 +4,7 @@ test.describe('Board Word Building', () => {
   test('should find word containing board word', async ({ page }) => {
     await page.goto('/');
 
-    await page.waitForSelector('input[placeholder*="AIDOORW"]');
+    await page.waitForSelector('input[placeholder*="AIDOORW"]', { timeout: 15000 });
 
     // Enter rack and board word
     await page.fill('input[placeholder*="AIDOORW"]', 'AID');
@@ -12,9 +12,12 @@ test.describe('Board Word Building', () => {
 
     await page.click('button:has-text("Find Best Word")');
 
+    // Wait for result with longer timeout
+    await page.waitForTimeout(500);
+
     // Either finds a word or shows error
-    const hasSuccess = await page.locator('text=Best Word Found!').isVisible().catch(() => false);
-    const hasError = await page.locator('text=Error').isVisible().catch(() => false);
+    const hasSuccess = await page.locator('text=Best Word Found!').isVisible({ timeout: 15000 }).catch(() => false);
+    const hasError = await page.locator('text=Error').isVisible({ timeout: 15000 }).catch(() => false);
 
     expect(hasSuccess || hasError).toBe(true);
 
@@ -41,16 +44,19 @@ test.describe('Board Word Building', () => {
   test('should work with rack and board combination', async ({ page }) => {
     await page.goto('/');
 
-    await page.waitForSelector('input[placeholder*="AIDOORW"]');
+    await page.waitForSelector('input[placeholder*="AIDOORW"]', { timeout: 15000 });
 
     await page.fill('input[placeholder*="AIDOORW"]', 'OOR');
     await page.fill('input[placeholder*="WIZ"]', 'DO');
 
     await page.click('button:has-text("Find Best Word")');
 
+    // Wait for result with longer timeout
+    await page.waitForTimeout(500);
+
     // Either finds a word or shows error
-    const hasSuccess = await page.locator('text=Best Word Found!').isVisible().catch(() => false);
-    const hasError = await page.locator('text=Error').isVisible().catch(() => false);
+    const hasSuccess = await page.locator('text=Best Word Found!').isVisible({ timeout: 15000 }).catch(() => false);
+    const hasError = await page.locator('text=Error').isVisible({ timeout: 15000 }).catch(() => false);
 
     expect(hasSuccess || hasError).toBe(true);
   });

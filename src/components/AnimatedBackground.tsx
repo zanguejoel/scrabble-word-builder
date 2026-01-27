@@ -3,21 +3,21 @@ import { motion } from 'framer-motion';
 export default function AnimatedBackground() {
   const orbs = [
     {
-      color: 'from-amber-500/20 to-orange-500/20',
+      color: 'from-amber-500/10 to-orange-500/10',
       size: 400,
       initialX: -100,
       initialY: -100,
       delay: 0
     },
     {
-      color: 'from-emerald-500/20 to-green-500/20',
+      color: 'from-emerald-500/10 to-green-500/10',
       size: 300,
       initialX: 100,
       initialY: 50,
       delay: 5
     },
     {
-      color: 'from-slate-500/20 to-slate-700/20',
+      color: 'from-slate-500/10 to-slate-700/10',
       size: 350,
       initialX: -50,
       initialY: 100,

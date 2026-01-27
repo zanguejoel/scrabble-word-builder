@@ -23,7 +23,7 @@ export default function AlphabetKeyboard({ onLetterClick, disabled, letterData }
   return (
     <div className="mb-6">
       <p className="text-slate-300 text-sm mb-3 text-center font-medium">
-        Click letters to build your word!
+        Click letters to build your letter rack!
       </p>
       <motion.div
         className="grid grid-cols-9 gap-2 max-w-2xl mx-auto"
