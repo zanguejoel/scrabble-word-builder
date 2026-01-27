@@ -4,7 +4,7 @@ A modern, interactive React web application that finds the highest scoring valid
 
 ## Live Demo
 
-Once deployed, the app will be available at: `https://[your-username].github.io/scrabble-word-builder/`
+Once deployed, the app will be available at: `https://zanguejoel.github.io/scrabble-word-builder/`
 
 ## Features
 
