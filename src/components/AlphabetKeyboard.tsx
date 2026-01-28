@@ -5,6 +5,7 @@ interface AlphabetKeyboardProps {
   onLetterClick: (letter: string) => void;
   disabled: boolean;
   letterData: LetterDataMap;
+  remainingCounts?: Record<string, number>;
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -19,7 +20,7 @@ const LETTER_COLORS = [
   'bg-teal-500', 'bg-blue-500'
 ];
 
-export default function AlphabetKeyboard({ onLetterClick, disabled, letterData }: AlphabetKeyboardProps) {
+export default function AlphabetKeyboard({ onLetterClick, disabled, letterData, remainingCounts }: AlphabetKeyboardProps) {
   return (
     <div className="mb-6">
       <p className="text-slate-300 text-sm mb-3 text-center font-medium">
@@ -32,12 +33,13 @@ export default function AlphabetKeyboard({ onLetterClick, disabled, letterData }
         {ALPHABET.map((letter, index) => {
           const score = letterData[letter]?.score || 0;
           const colorClass = LETTER_COLORS[index];
+          const remaining = remainingCounts ? remainingCounts[letter] : undefined;
 
           return (
             <motion.button
               key={letter}
               type="button"
-              disabled={disabled}
+              disabled={disabled || (remaining !== undefined && remaining <= 0)}
               onClick={() => onLetterClick(letter)}
               whileHover={!disabled ? { scale: 1.1, rotate: 5 } : {}}
               whileTap={!disabled ? { scale: 0.95 } : {}}
@@ -53,6 +55,11 @@ export default function AlphabetKeyboard({ onLetterClick, disabled, letterData }
               <span className="absolute bottom-0.5 right-1 text-xs opacity-75">
                 {score}
               </span>
+              {remaining !== undefined && (
+                <span className="absolute top-0.5 left-1 text-xs bg-black/40 rounded px-1 py-0.5 opacity-80">
+                  {remaining}
+                </span>
+              )}
             </motion.button>
           );
         })}

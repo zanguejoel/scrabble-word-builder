@@ -23,7 +23,8 @@ test.describe('Word Finding Flow', () => {
 
     // Verify a result is displayed
     await expect(page.locator('text=Best Word Found!')).toBeVisible();
-    await expect(page.locator('text=Score:')).toBeVisible();
+    // Use a more specific selector for the result score (not the settings drawer)
+    await expect(page.locator('.bg-gradient-to-r:has-text("Score:")')).toBeVisible();
   });
 
   test('should display letter breakdown', async ({ page }) => {

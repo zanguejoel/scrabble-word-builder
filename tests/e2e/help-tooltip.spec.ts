@@ -31,9 +31,10 @@ test.describe('Help Tooltip', () => {
     // Wait for tooltip and animation to complete
     await expect(page.locator('text=How to Use')).toBeVisible({ timeout: 3000 });
 
-    await expect(page.locator('text=1. Enter Your Rack')).toBeVisible();
-    await expect(page.locator('text=2. Add Board Letters (Optional)')).toBeVisible();
-    await expect(page.locator('text=3. Find Best Word')).toBeVisible();
+    // Use more specific selectors to avoid false negatives
+    await expect(page.locator('p.font-semibold:text("1. Enter Your Rack")')).toBeVisible();
+    await expect(page.locator('p.font-semibold:text("2. Add Board Letters (Optional)")')).toBeVisible();
+    await expect(page.locator('p.font-semibold:text("3. Find Best Word")')).toBeVisible();
   });
 
   test('should display instruction details', async ({ page }) => {

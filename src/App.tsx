@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import Header from './components/Header';
+import { Header } from './components/Header';
 import RackInput from './components/RackInput';
 import BoardWordInput from './components/BoardWordInput';
 import ResultDisplay from './components/ResultDisplay';
 import AnimatedBackground from './components/AnimatedBackground';
 import AlphabetKeyboard from './components/AlphabetKeyboard';
+import { getRemainingLetterCounts } from './utils/remainingLetters';
 import LetterSlots from './components/LetterSlots';
 import ControlButtons from './components/ControlButtons';
 import ScrollButtons from './components/ScrollButtons';
@@ -207,7 +208,32 @@ function App() {
     >
       <AnimatedBackground />
       <div className="max-w-6xl mx-auto relative z-10">
-        <Header />
+        <Header
+          letterData={letterData || undefined}
+          onLetterDataChange={
+            letterData
+              ? (letter: string, field: 'score' | 'count', value: number) => {
+                  setLetterData(ld => {
+                    if (!ld) return ld;
+                    return {
+                      ...ld,
+                      [letter]: {
+                        ...ld[letter],
+                        [field]: value
+                      }
+                    };
+                  });
+                }
+              : undefined
+          }
+          dictionary={dictionary || undefined}
+          matches={(() => {
+            if (result && 'allWords' in result && Array.isArray(result.allWords)) {
+              return new Set(result.allWords.map(w => w.word));
+            }
+            return new Set();
+          })()}
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -235,6 +261,7 @@ function App() {
                     onLetterClick={handleLetterClick}
                     disabled={rack.length >= 7}
                     letterData={letterData}
+                    remainingCounts={getRemainingLetterCounts(letterData, rack, boardWord)}
                   />
                 )}
 
