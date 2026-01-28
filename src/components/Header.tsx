@@ -11,7 +11,7 @@ export type HeaderProps = {
   matches?: Set<string>;
 };
 
-const Header = ({
+export function Header({
   letterData,
   onLetterDataChange,
   dictionary,
@@ -95,5 +95,6 @@ const Header = ({
     </motion.div>
   );
 }
+
 
 export default Header;
