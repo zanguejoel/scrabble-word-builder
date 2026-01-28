@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, UIEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface DictionaryDrawerProps {
   open: boolean;
