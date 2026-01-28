@@ -1,5 +1,10 @@
 {
   "name": "scrabble-word-builder",
+  "authors": [
+    {
+      "name": "Joel Zangue",
+      "email": "zanguejoel@gmail.com"
+  }],
   "private": true,
   "version": "1.0.0",
   "description": "Find the highest scoring Scrabble word from a rack of letters - Modern React Web App",

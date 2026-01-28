@@ -64,15 +64,6 @@ Output:
   Error: Too many 'Z' tiles used. Limit is 1, using 2
 ```
 
-#### Example 4: Invalid - Rack Too Long
-```
-Input:
-  rack: "AIDOORWZ"
-  word: (any)
-Output:
-  Error: Rack must contain 1-7 letters
-```
-
 ## Installation
 
 ### Prerequisites
@@ -82,7 +73,7 @@ Output:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/[your-username]/scrabble-word-builder.git
+   git clone https://github.com/zanguejoel/scrabble-word-builder.git
    cd scrabble-word-builder
    ```
 
@@ -95,7 +86,7 @@ Output:
    ```bash
    npm run dev
    ```
-   The app will be available at `http://localhost:5173`
+   The app will be available at (`http://localhost:5173`)[http://localhost:5173]
 
 4. **Build for production**
    ```bash
@@ -123,7 +114,6 @@ Output:
 - **Invalid Input**: If you enter non-letter characters, too many letters, or an invalid board word, a clear error message is shown.
 - **Too Many Tiles**: If your rack and board word use more tiles than allowed (e.g., two Z's), you'll see a specific error.
 - **No Valid Words**: If no valid word can be formed, the app will inform you.
-- **Live Validation**: Input fields provide instant feedback as you type.
 
 ### Accessibility & Usability
 - Fully keyboard accessible and screen reader friendly.
@@ -308,8 +298,6 @@ Potential improvements for future iterations:
 - **Dark/Light Theme**: Theme toggle for user preference
 - **Accessibility**: Enhanced screen reader support and keyboard navigation
 - **PWA**: Make it installable as Progressive Web App
-- **Unit Tests**: Comprehensive test coverage with Jest/Vitest
-- **E2E Tests**: Playwright or Cypress integration tests
 
 
 ## Contributing
