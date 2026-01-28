@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function HelpTooltip() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [hoverDisabled, setHoverDisabled] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const hoverTimerRef = useRef<number | null>(null);
 
   // Handle clicks outside to close tooltip
   useEffect(() => {
@@ -23,13 +25,43 @@ export default function HelpTooltip() {
     }
   }, [isOpen, isLocked]);
 
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleButtonClick = () => {
-    setIsOpen(!isOpen);
-    setIsLocked(!isOpen); // Lock it open when clicking
+    const newIsOpen = !isOpen;
+
+    // Clear any existing timer
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+
+    if (newIsOpen) {
+      // Opening - enable hover immediately and lock
+      setIsOpen(true);
+      setIsLocked(true);
+      setHoverDisabled(false);
+    } else {
+      // Closing - close immediately, unlock, and disable hover temporarily
+      setIsOpen(false);
+      setIsLocked(false);
+      setHoverDisabled(true);
+      hoverTimerRef.current = setTimeout(() => {
+        setHoverDisabled(false);
+        hoverTimerRef.current = null;
+      }, 300);
+    }
   };
 
   const handleMouseEnter = () => {
-    if (!isLocked) {
+    if (!isLocked && !hoverDisabled) {
       setIsOpen(true);
     }
   };
